@@ -24,7 +24,7 @@ class _ListChatViewState extends State<ListChatView> {
     return Obx(
       () => TapToUnfocus(
         child: Scaffold(
-          appBar: appbarCommon(ListConversationController()
+          appBar: appbarCommon(Get.find<ListConversationController>()
               .getConversationNane(listChatControlle.conversation)),
           backgroundColor: Colors.white,
           body: listChatControlle.isLoading.value
