@@ -3,7 +3,9 @@ import 'package:chat_with_golang/common/loading.dart';
 import 'package:chat_with_golang/common/tap_to_unfocus.dart';
 import 'package:chat_with_golang/list_chat/list_chat_controller.dart';
 import 'package:chat_with_golang/list_conversation/list_conversation_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 
 class ListChatView extends StatefulWidget {
@@ -31,20 +33,41 @@ class _ListChatViewState extends State<ListChatView> {
                   // color: Colors.red,
                   child: Column(
                     children: [
+                      Visibility(
+                          visible: listChatControlle.isLoadmore.value,
+                          child: const CupertinoActivityIndicator()),
                       Expanded(
-                        child: ListView.builder(
-                            reverse: true,
-                            shrinkWrap: true,
-                            itemCount: listChatControlle.listChatMessage.length,
-                            itemBuilder: (context, index) {
-                              return yourMessage(
-                                  listChatControlle
-                                          .listChatMessage[index].content ??
-                                      "",
-                                  listConversationController.name.value ==
-                                      listChatControlle
-                                          .listChatMessage[index].from);
-                            }),
+                        child: NotificationListener<ScrollNotification>(
+                          onNotification: (ScrollNotification notification) {
+                            if (notification is UserScrollNotification) {
+                              if (notification.direction ==
+                                  ScrollDirection.forward) {
+                                // Handle scroll down.
+                              } else if (notification.direction ==
+                                  ScrollDirection.reverse) {
+                                listChatControlle.loadMoreMessage();
+                                // Handle scroll up.
+                              }
+                            }
+                            // Returning null (or false) to
+                            // "allow the notification to continue to be dispatched to further ancestors".
+                            return false;
+                          },
+                          child: ListView.builder(
+                              reverse: true,
+                              shrinkWrap: true,
+                              itemCount:
+                                  listChatControlle.listChatMessage.length,
+                              itemBuilder: (context, index) {
+                                return yourMessage(
+                                    listChatControlle
+                                            .listChatMessage[index].content ??
+                                        "",
+                                    listConversationController.name.value ==
+                                        listChatControlle
+                                            .listChatMessage[index].from);
+                              }),
+                        ),
                       ),
                       Container(
                           width: MediaQuery.of(context).size.width,

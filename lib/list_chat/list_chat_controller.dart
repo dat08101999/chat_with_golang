@@ -10,8 +10,9 @@ class ListChatController extends GetxController {
   late Conversation conversation;
   RxList<ListChatModel> listChatMessage = <ListChatModel>[].obs;
   int page = 1;
-  int perpage = 10;
+  int perpage = 30;
   RxBool isLoading = false.obs;
+  RxBool isLoadmore = false.obs;
   @override
   void onInit() {
     conversation = Get.arguments;
@@ -27,6 +28,14 @@ class ListChatController extends GetxController {
     listChatMessage.value =
         await ListChatRepo().getListChat(conversation.id ?? "", page, perpage);
     isLoading.value = false;
+  }
+
+  loadMoreMessage() async {
+    page++;
+    isLoadmore.value = true;
+    listChatMessage.addAll(
+        await ListChatRepo().getListChat(conversation.id ?? '', page, perpage));
+    isLoadmore.value = false;
   }
 
   sendMessage(String message) async {

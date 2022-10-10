@@ -7,6 +7,7 @@ class SendMessageRepository {
       var response = await request.requestApi(
           data: data, method: MethodType.POST, url: urlSendMessage + useID);
       if (response is ErrorModel) {
+        print(response.message);
         return false;
       }
     } catch (ex) {
